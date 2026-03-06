@@ -1,38 +1,61 @@
 {
   "version": 2,
-  "name": "class-unblocker",
-
-  "buildCommand": "npm install && node scripts/build.js",
-  "outputDirectory": "public",
-
   "rewrites": [
     {
-      "source": "/bare/:path*",
-      "destination": "https://your-bare-server.example.com/:path*"
-    },
-    {
-      "source": "/service/:path*",
-      "destination": "/service/:path*"
-    },
-    {
-      "source": "/((?!.*\\.).*)",
-      "destination": "/index.html"
+      "source": "/service/(.*)",
+      "destination": "/service/$1"
     }
   ],
-
+  "routes": [
+    {
+      "src": "/uv/uv.sw.js",
+      "headers": {
+        "Service-Worker-Allowed": "/",
+        "Cache-Control": "no-cache, no-store, must-revalidate"
+      },
+      "continue": true
+    },
+    {
+      "src": "/uv/(.*)",
+      "headers": {
+        "Cache-Control": "public, max-age=604800, immutable"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options",  "value": "nosniff" },
-        { "key": "Referrer-Policy",         "value": "no-referrer" },
-        { "key": "Permissions-Policy",      "value": "interest-cohort=()" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "interest-cohort=()"
+        }
       ]
     },
     {
-      "source": "/uv/(.*)",
+      "source": "/uv/uv.sw.js",
       "headers": [
-        { "key": "Service-Worker-Allowed", "value": "/" }
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
       ]
     }
   ]
