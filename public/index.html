@@ -8,29 +8,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #1a1a1f;
-      --surface:   #222228;
-      --surface-2: #2a2a32;
-      --border:    rgba(255,255,255,0.07);
-      --accent:    #007bff;
-      --accent-glow: rgba(0, 123, 255, 0.35);
+      --bg:           #1a1a1f;
+      --surface:      #222228;
+      --surface-2:    #2a2a32;
+      --surface-3:    #32323e;
+      --border:       rgba(255,255,255,0.07);
+      --accent:       #007bff;
+      --accent-glow:  rgba(0,123,255,0.35);
       --accent-hover: #339cff;
-      --text:      #f0f0f5;
-      --text-muted:#8888aa;
-      --radius:    14px;
-      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --text:         #f0f0f5;
+      --text-muted:   #8888aa;
+      --radius:       12px;
+      --tb-h:         56px;
+      --ease:         0.22s cubic-bezier(0.4,0,0.2,1);
     }
 
-    html, body {
-      height: 100%;
-    }
+    html, body { height: 100%; overflow: hidden; }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -38,14 +34,146 @@
       color: var(--text);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      overflow-x: hidden;
     }
 
-    /* ── Background grid ── */
-    body::before {
+    /* ═══════════════════════════════════════════
+       TOOLBAR
+    ═══════════════════════════════════════════ */
+    #toolbar {
+      flex-shrink: 0;
+      height: var(--tb-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0 0.75rem;
+      z-index: 100;
+    }
+
+    .tb-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      padding-right: 0.6rem;
+      border-right: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .tb-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--ease), color var(--ease);
+      flex-shrink: 0;
+    }
+
+    .tb-btn:hover { background: var(--surface-2); color: var(--text); }
+    .tb-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+    .tb-btn:disabled:hover { background: transparent; color: var(--text-muted); }
+
+    .tb-url-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .tb-url-icon {
+      position: absolute;
+      left: 0.85rem;
+      color: var(--text-muted);
+      pointer-events: none;
+      display: flex;
+    }
+
+    #urlBar {
+      width: 100%;
+      height: 36px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0 1rem 0 2.5rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.8rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--ease), box-shadow var(--ease);
+    }
+
+    #urlBar::placeholder { color: var(--text-muted); }
+
+    #urlBar:focus {
+      border-color: rgba(0,123,255,0.5);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .tb-go {
+      height: 36px;
+      padding: 0 1.1rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: background var(--ease), box-shadow var(--ease), transform var(--ease);
+      box-shadow: 0 0 14px rgba(0,123,255,0.28);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .tb-go:hover { background: var(--accent-hover); box-shadow: 0 0 22px rgba(0,123,255,0.5); transform: translateY(-1px); }
+    .tb-go:active { transform: translateY(0); }
+
+    /* ═══════════════════════════════════════════
+       MAIN AREA
+    ═══════════════════════════════════════════ */
+    #main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── Home ── */
+    #home {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      overflow-y: auto;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #home.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.97);
+    }
+
+    #home::before {
       content: '';
       position: fixed;
       inset: 0;
@@ -54,80 +182,70 @@
         linear-gradient(90deg, rgba(0,123,255,0.04) 1px, transparent 1px);
       background-size: 48px 48px;
       pointer-events: none;
-      z-index: 0;
     }
 
-    /* ── Ambient glow ── */
-    body::after {
+    #home::after {
       content: '';
       position: fixed;
-      top: -20%;
-      left: 50%;
+      top: 0; left: 50%;
       transform: translateX(-50%);
-      width: 700px;
-      height: 500px;
-      background: radial-gradient(ellipse, rgba(0,123,255,0.12) 0%, transparent 70%);
+      width: 700px; height: 420px;
+      background: radial-gradient(ellipse, rgba(0,123,255,0.1) 0%, transparent 70%);
       pointer-events: none;
-      z-index: 0;
     }
 
-    /* ── Main wrapper ── */
-    .wrapper {
+    .home-inner {
       position: relative;
       z-index: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
-      max-width: 680px;
-      padding: 2rem 1.5rem;
-      animation: fadeUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+      max-width: 620px;
+      animation: fadeUp 0.65s cubic-bezier(0.4,0,0.2,1) both;
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
+      from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Logo / badge ── */
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
       background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 0.35rem 1rem;
-      font-size: 0.72rem;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.7rem;
       font-weight: 500;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: 2rem;
+      margin-bottom: 1.8rem;
     }
 
     .badge-dot {
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--accent);
       box-shadow: 0 0 8px var(--accent);
-      animation: pulse 2s ease-in-out infinite;
+      animation: blink 2s ease-in-out infinite;
     }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.5; transform: scale(0.7); }
+    @keyframes blink {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.35; transform:scale(.6); }
     }
 
-    /* ── Heading ── */
     h1 {
-      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      font-size: clamp(2rem, 5.5vw, 3.2rem);
       font-weight: 700;
       letter-spacing: -0.03em;
-      line-height: 1.1;
       text-align: center;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.6rem;
+      line-height: 1.1;
     }
 
     h1 span {
@@ -138,67 +256,49 @@
     }
 
     .subtitle {
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
       font-weight: 300;
       text-align: center;
-      margin-bottom: 2.8rem;
-      letter-spacing: 0.01em;
+      margin-bottom: 2.2rem;
     }
 
-    /* ── Search card ── */
     .search-card {
       width: 100%;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: calc(var(--radius) + 4px);
-      padding: 1.5rem;
-      box-shadow:
-        0 4px 6px rgba(0,0,0,0.3),
-        0 1px 0 rgba(255,255,255,0.04) inset;
+      border-radius: 18px;
+      padding: 1.4rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,255,0.04) inset;
     }
 
-    /* ── Search bar ── */
-    .search-row {
-      display: flex;
-      gap: 0.6rem;
-      width: 100%;
-    }
+    .search-row { display: flex; gap: 0.55rem; }
 
-    .search-input-wrap {
-      flex: 1;
-      position: relative;
-    }
+    .search-input-wrap { flex: 1; position: relative; }
 
     .search-icon {
       position: absolute;
-      left: 1.1rem;
-      top: 50%;
+      left: 1rem; top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
       pointer-events: none;
       display: flex;
-      align-items: center;
     }
 
     .search-input {
-      width: 100%;
-      height: 52px;
+      width: 100%; height: 50px;
       background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 0 1.1rem 0 3rem;
+      padding: 0 1rem 0 2.8rem;
       font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 400;
+      font-size: 0.9rem;
       color: var(--text);
       outline: none;
-      transition: border-color var(--transition), box-shadow var(--transition);
+      transition: border-color var(--ease), box-shadow var(--ease);
     }
 
-    .search-input::placeholder {
-      color: var(--text-muted);
-    }
+    .search-input::placeholder { color: var(--text-muted); }
 
     .search-input:focus {
       border-color: rgba(0,123,255,0.5);
@@ -206,203 +306,341 @@
     }
 
     .search-btn {
-      height: 52px;
-      padding: 0 1.6rem;
+      height: 50px;
+      padding: 0 1.4rem;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: var(--radius);
       font-family: 'Poppins', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       font-weight: 600;
       cursor: pointer;
-      white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 0.45rem;
-      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
-      box-shadow: 0 0 20px rgba(0,123,255,0.3);
+      gap: 0.4rem;
+      transition: background var(--ease), transform var(--ease), box-shadow var(--ease);
+      box-shadow: 0 0 18px rgba(0,123,255,0.28);
+      white-space: nowrap;
     }
 
-    .search-btn:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 0 30px rgba(0,123,255,0.5);
-    }
+    .search-btn:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 0 28px rgba(0,123,255,0.5); }
+    .search-btn:active { transform: translateY(0); }
 
-    .search-btn:active {
-      transform: translateY(0);
-    }
-
-    /* ── Quick-access chips ── */
     .quick-label {
-      font-size: 0.73rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 0.7rem; font-weight: 500;
+      letter-spacing: 0.08em; text-transform: uppercase;
       color: var(--text-muted);
-      margin-top: 1.2rem;
-      margin-bottom: 0.6rem;
+      margin: 1.1rem 0 0.55rem;
     }
 
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-    }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 
     .chip {
       background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: 0.3rem 0.9rem;
-      font-size: 0.8rem;
-      font-weight: 400;
+      padding: 0.28rem 0.85rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       cursor: pointer;
-      transition: color var(--transition), border-color var(--transition), background var(--transition);
       user-select: none;
+      transition: color var(--ease), border-color var(--ease), background var(--ease);
     }
 
-    .chip:hover {
-      color: var(--accent);
-      border-color: rgba(0,123,255,0.4);
-      background: rgba(0,123,255,0.08);
+    .chip:hover { color: var(--accent); border-color: rgba(0,123,255,0.4); background: rgba(0,123,255,0.08); }
+
+    /* ── Browser / iframe view ── */
+    #browser-view {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.015);
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    /* ── Footer ── */
-    footer {
-      position: relative;
-      z-index: 1;
-      margin-top: 3rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-
-    footer a {
-      color: inherit;
-      text-decoration: none;
-      opacity: 0.6;
-    }
-
-    footer a:hover {
+    #browser-view.active {
       opacity: 1;
+      pointer-events: all;
+      transform: scale(1);
+    }
+
+    /* Loading bar */
+    #load-bar {
+      position: absolute;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+      box-shadow: 0 0 10px var(--accent);
+      z-index: 10;
+      transition: width 0.3s ease, opacity 0.4s ease;
+    }
+
+    #load-bar.done { opacity: 0; }
+
+    #proxy-frame {
+      flex: 1;
+      width: 100%;
+      border: none;
+      background: #fff;
     }
 
     /* ── Responsive ── */
-    @media (max-width: 480px) {
+    @media (max-width: 520px) {
       .search-row { flex-direction: column; }
-      .search-btn  { height: 48px; justify-content: center; }
-      .search-input { height: 48px; }
+      .search-btn { height: 46px; justify-content: center; }
+      .tb-logo span { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <div class="wrapper">
+  <!-- ══════════ TOOLBAR ══════════ -->
+  <div id="toolbar">
 
-    <div class="badge">
-      <span class="badge-dot"></span>
-      Proxy · Secure · Fast
+    <div class="tb-logo" id="homeBtn" title="Go home">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span>Class Unblocker</span>
     </div>
 
-    <h1><span>Class Unblocker</span></h1>
-    <p class="subtitle">Browse freely. Enter a URL or search term to get started.</p>
+    <button class="tb-btn" id="btnBack" title="Back" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
 
-    <div class="search-card">
-      <div class="search-row">
-        <div class="search-input-wrap">
-          <span class="search-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-          </span>
-          <input
-            id="searchInput"
-            class="search-input"
-            type="text"
-            placeholder="Search or enter a URL…"
-            autocomplete="off"
-            autocorrect="off"
-            spellcheck="false"
-          />
-        </div>
-        <button class="search-btn" id="goBtn" onclick="handleSearch()">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-          </svg>
-          Go
-        </button>
-      </div>
+    <button class="tb-btn" id="btnFwd" title="Forward" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    </button>
 
-      <p class="quick-label">Quick access</p>
-      <div class="chips" id="chips"></div>
+    <button class="tb-btn" id="btnReload" title="Reload">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+    </button>
+
+    <div class="tb-url-wrap">
+      <span class="tb-url-icon">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </span>
+      <input id="urlBar" type="text" placeholder="Search or enter a URL…"
+        autocomplete="off" autocorrect="off" spellcheck="false" />
     </div>
+
+    <button class="tb-go" id="btnGo">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+      </svg>
+      Go
+    </button>
 
   </div>
 
-  <footer>&copy; 2025 Class Unblocker &nbsp;·&nbsp; <a href="#">Privacy</a></footer>
+  <!-- ══════════ MAIN ══════════ -->
+  <div id="main">
+
+    <!-- Home screen -->
+    <div id="home">
+      <div class="home-inner">
+        <div class="badge"><span class="badge-dot"></span> Proxy · Secure · Fast</div>
+        <h1><span>Class Unblocker</span></h1>
+        <p class="subtitle">Browse freely. Enter a URL or search term to get started.</p>
+
+        <div class="search-card">
+          <div class="search-row">
+            <div class="search-input-wrap">
+              <span class="search-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </span>
+              <input id="homeInput" class="search-input" type="text"
+                placeholder="Search or enter a URL…"
+                autocomplete="off" autocorrect="off" spellcheck="false" />
+            </div>
+            <button class="search-btn" id="homeGo">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+              </svg>
+              Go
+            </button>
+          </div>
+
+          <p class="quick-label">Quick access</p>
+          <div class="chips" id="chips"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Iframe browser -->
+    <div id="browser-view">
+      <div id="load-bar"></div>
+      <iframe
+        id="proxy-frame"
+        sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-scripts allow-same-origin allow-top-navigation-by-user-activation"
+      ></iframe>
+    </div>
+
+  </div>
 
   <script src="/uv/uv.bundle.js"></script>
   <script src="/uv/uv.config.js"></script>
 
   <script>
-    // ── Quick-access chips ──────────────────────────────────────────────────
+    /* ─── DOM refs ─────────────────────────────────────────────────────── */
+    const homeEl    = document.getElementById('home');
+    const browserEl = document.getElementById('browser-view');
+    const frame     = document.getElementById('proxy-frame');
+    const urlBar    = document.getElementById('urlBar');
+    const homeInput = document.getElementById('homeInput');
+    const loadBar   = document.getElementById('load-bar');
+    const btnBack   = document.getElementById('btnBack');
+    const btnFwd    = document.getElementById('btnFwd');
+    const btnReload = document.getElementById('btnReload');
+
+    /* ─── Quick-access chips ───────────────────────────────────────────── */
     const shortcuts = [
-      { label: 'Eagler Craft',    url: 'https://eaglercraft.com'    },
-      { label: 'YouTube',   url: 'https://youtube.com'   },
-      { label: 'Poki', url: 'https://poki.com' },
-      { label: 'Chatgpt',    url: 'https://chatgpt.com'    },
-      { label: 'Eclipse Lunar',    url: 'https://crimsonzerohub.xyz/'    },
+      { label: 'Google',       url: 'https://google.com' },
+      { label: 'YouTube',      url: 'https://youtube.com' },
+      { label: 'Wikipedia',    url: 'https://wikipedia.org' },
+      { label: 'Reddit',       url: 'https://reddit.com' },
+      { label: 'GitHub',       url: 'https://github.com' },
       { label: 'Khan Academy', url: 'https://khanacademy.org' },
     ];
 
     const chipsEl = document.getElementById('chips');
     shortcuts.forEach(({ label, url }) => {
-      const chip = document.createElement('button');
-      chip.className = 'chip';
-      chip.textContent = label;
-      chip.addEventListener('click', () => navigate(url));
-      chipsEl.appendChild(chip);
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = label;
+      btn.addEventListener('click', () => navigate(url));
+      chipsEl.appendChild(btn);
     });
 
-    // ── Enter key ──────────────────────────────────────────────────────────
-    document.getElementById('searchInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') handleSearch();
-    });
-
-    // ── Search / navigate logic ────────────────────────────────────────────
-    function handleSearch() {
-      const raw = document.getElementById('searchInput').value.trim();
-      if (!raw) return;
-      navigate(raw);
-    }
-
-    function navigate(raw) {
-      let target;
+    /* ─── URL resolution ───────────────────────────────────────────────── */
+    function resolveTarget(raw) {
+      raw = (raw || '').trim();
+      if (!raw) return null;
       try {
-        // if it parses as a URL (with or without scheme) → proxy it
         const withScheme = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
         const url = new URL(withScheme);
-        // basic host check: must have a dot (e.g. google.com)
-        if (url.hostname.includes('.')) {
-          target = url.href;
-        } else {
-          throw new Error('search term');
-        }
-      } catch {
-        // fall back to Google search
-        target = 'https://www.google.com/search?q=' + encodeURIComponent(raw);
-      }
-
-      // Route through Ultraviolet if available, otherwise open directly
-      if (typeof __uv$config !== 'undefined' && __uv$config.prefix) {
-        location.href = __uv$config.prefix + __uv$config.encodeUrl(target);
-      } else {
-        window.open(target, '_blank', 'noopener,noreferrer');
-      }
+        if (url.hostname.includes('.')) return url.href;
+      } catch {}
+      // Fall back to Google search
+      return 'https://www.google.com/search?q=' + encodeURIComponent(raw);
     }
+
+    function buildProxyURL(target) {
+      if (typeof __uv$config !== 'undefined' && __uv$config.prefix) {
+        return __uv$config.prefix + __uv$config.encodeUrl(target);
+      }
+      return target; // bare fallback (UV not loaded)
+    }
+
+    /* ─── Load bar ─────────────────────────────────────────────────────── */
+    let loadTimer;
+
+    function startLoad() {
+      clearTimeout(loadTimer);
+      loadBar.classList.remove('done');
+      loadBar.style.transition = 'none';
+      loadBar.style.width = '0%';
+      requestAnimationFrame(() => {
+        loadBar.style.transition = 'width 14s cubic-bezier(0.05,0.5,0.1,1)';
+        loadBar.style.width = '80%';
+      });
+    }
+
+    function finishLoad() {
+      loadBar.style.transition = 'width 0.2s ease';
+      loadBar.style.width = '100%';
+      loadTimer = setTimeout(() => loadBar.classList.add('done'), 380);
+    }
+
+    /* ─── History stack ─────────────────────────────────────────────────── */
+    let navHistory = [];
+    let histIdx    = -1;
+    let skipPush   = false;
+
+    function updateNavBtns() {
+      btnBack.disabled = histIdx <= 0;
+      btnFwd.disabled  = histIdx >= navHistory.length - 1;
+    }
+
+    /* ─── Core navigate function ────────────────────────────────────────── */
+    function navigate(raw) {
+      const target = resolveTarget(raw);
+      if (!target) return;
+
+      // Sync toolbar URL bar
+      urlBar.value = target;
+
+      // Show iframe view, hide home
+      homeEl.classList.add('hidden');
+      browserEl.classList.add('active');
+
+      // Push to history (unless going back/forward)
+      if (!skipPush) {
+        navHistory = navHistory.slice(0, histIdx + 1);
+        navHistory.push(target);
+        histIdx = navHistory.length - 1;
+      }
+      skipPush = false;
+      updateNavBtns();
+
+      startLoad();
+      frame.src = buildProxyURL(target);
+    }
+
+    /* ─── Toolbar button events ─────────────────────────────────────────── */
+    document.getElementById('homeBtn').addEventListener('click', () => {
+      browserEl.classList.remove('active');
+      homeEl.classList.remove('hidden');
+      urlBar.value = '';
+    });
+
+    btnBack.addEventListener('click', () => {
+      if (histIdx > 0) { histIdx--; skipPush = true; navigate(navHistory[histIdx]); }
+    });
+
+    btnFwd.addEventListener('click', () => {
+      if (histIdx < navHistory.length - 1) { histIdx++; skipPush = true; navigate(navHistory[histIdx]); }
+    });
+
+    btnReload.addEventListener('click', () => {
+      if (frame.src && frame.src !== window.location.href) {
+        startLoad();
+        frame.src = frame.src;
+      }
+    });
+
+    document.getElementById('btnGo').addEventListener('click', () => navigate(urlBar.value));
+    urlBar.addEventListener('keydown', e => { if (e.key === 'Enter') navigate(urlBar.value); });
+
+    document.getElementById('homeGo').addEventListener('click', () => navigate(homeInput.value));
+    homeInput.addEventListener('keydown', e => { if (e.key === 'Enter') navigate(homeInput.value); });
+
+    /* ─── Iframe events ─────────────────────────────────────────────────── */
+    frame.addEventListener('load', () => {
+      finishLoad();
+      // Attempt to read the proxied URL (cross-origin; will silently fail)
+      try {
+        const loc = frame.contentWindow.location.href;
+        if (loc && loc !== 'about:blank') urlBar.value = loc;
+      } catch {}
+    });
   </script>
 
 </body>
