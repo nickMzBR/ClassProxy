@@ -6,205 +6,114 @@
   <title>Class Unblocker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #0d0f1a;
-      --surface:   #161824;
-      --card:      #1c1f2e;
-      --border:    #252839;
-      --accent:    #007bff;
-      --accent-h:  #3395ff;
-      --accent-glow: rgba(0,123,255,0.4);
-      --accent-dim:  rgba(0,123,255,0.10);
-      --text:      #e8eaf6;
-      --muted:     #5a6482;
-      --success:   #00e5a0;
-      --danger:    #ff4d6d;
-      --radius:    14px;
-      --ease:      cubic-bezier(0.4,0,0.2,1);
+      --bg: #0d0f1a; --surface: #161824; --card: #1c1f2e; --border: #252839;
+      --accent: #007bff; --accent-h: #3395ff; --accent-glow: rgba(0,123,255,0.4);
+      --accent-dim: rgba(0,123,255,0.10); --text: #e8eaf6; --muted: #5a6482;
+      --success: #00e5a0; --danger: #ff4d6d; --radius: 14px;
+      --ease: cubic-bezier(0.4,0,0.2,1);
     }
-
     html, body { height: 100%; background: var(--bg); color: var(--text);
       font-family: 'DM Sans', sans-serif; font-size: 15px; overflow-x: hidden; }
-
-    /* Grid bg */
     body::before {
       content: ''; position: fixed; inset: 0; z-index: 0;
-      background-image:
-        linear-gradient(rgba(0,123,255,0.035) 1px, transparent 1px),
+      background-image: linear-gradient(rgba(0,123,255,0.035) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0,123,255,0.035) 1px, transparent 1px);
-      background-size: 52px 52px;
-      pointer-events: none;
+      background-size: 52px 52px; pointer-events: none;
     }
-
-    /* Top glow */
     body::after {
       content: ''; position: fixed; top: -15%; left: 50%; transform: translateX(-50%);
       width: 900px; height: 600px; z-index: 0;
       background: radial-gradient(ellipse, rgba(0,123,255,0.12) 0%, transparent 65%);
       pointer-events: none;
     }
-
     .page {
-      position: relative; z-index: 1;
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
+      position: relative; z-index: 1; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 40px 16px 72px;
-      gap: 0;
     }
-
-    /* ── HEADER ── */
     .header { text-align: center; margin-bottom: 40px; animation: up .55s var(--ease) both; }
-
     .badge {
       display: inline-flex; align-items: center; gap: 8px;
       background: var(--accent-dim); border: 1px solid rgba(0,123,255,0.22);
       border-radius: 100px; padding: 5px 16px 5px 10px;
       font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
-      margin-bottom: 22px;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px;
     }
-    .badge .dot {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--success);
-      box-shadow: 0 0 8px var(--success); animation: blink 2.2s ease infinite;
-    }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2.6rem, 7vw, 4.2rem);
-      font-weight: 800; letter-spacing: -0.03em; line-height: 1.05;
-      margin-bottom: 12px;
-    }
-    h1 span.w { color: #ffffff; }
-    h1 span.b { color: var(--accent); }
-
-    .sub {
-      color: var(--muted); font-size: .93rem; font-weight: 300;
-      max-width: 400px; margin: 0 auto 18px;
-    }
-
+    .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success);
+      box-shadow: 0 0 8px var(--success); animation: blink 2.2s ease infinite; }
+    h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.6rem, 7vw, 4.2rem);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 12px; }
+    h1 .w { color: #fff; } h1 .b { color: var(--accent); }
+    .sub { color: var(--muted); font-size: .93rem; font-weight: 300; max-width: 400px; margin: 0 auto 18px; }
     #sw-status {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-size: .76rem; font-weight: 500;
-      padding: 5px 14px; border-radius: 100px;
-      border: 1px solid var(--border); background: var(--surface); color: var(--muted);
-      transition: .3s var(--ease);
+      display: inline-flex; align-items: center; gap: 7px; font-size: .76rem; font-weight: 500;
+      padding: 5px 14px; border-radius: 100px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted); transition: .3s var(--ease);
     }
     #sw-status .sdot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
     #sw-status.ready { color: var(--success); border-color: rgba(0,229,160,.3); background: rgba(0,229,160,.07); }
     #sw-status.error { color: var(--danger); border-color: rgba(255,77,109,.3); background: rgba(255,77,109,.07); }
-
-    /* ── CARD ── */
     .card {
-      width: 100%; max-width: 640px;
-      background: var(--card); border: 1px solid var(--border);
+      width: 100%; max-width: 640px; background: var(--card); border: 1px solid var(--border);
       border-radius: 22px; padding: 28px 28px 24px;
       box-shadow: 0 30px 90px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.04);
-      animation: up .55s var(--ease) both .1s;
-      margin-bottom: 24px;
+      animation: up .55s var(--ease) both .1s; margin-bottom: 24px;
     }
-
-    .input-wrap {
-      position: relative; display: flex; align-items: center; margin-bottom: 12px;
-    }
-    .input-wrap svg {
-      position: absolute; left: 16px; width: 17px; height: 17px;
-      stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round;
-      pointer-events: none; transition: stroke .25s;
-    }
-
+    .input-wrap { position: relative; display: flex; align-items: center; margin-bottom: 12px; }
+    .input-wrap svg { position: absolute; left: 16px; width: 17px; height: 17px;
+      stroke: var(--muted); fill: none; stroke-width: 2; stroke-linecap: round; pointer-events: none; }
     #url-input {
-      width: 100%; background: var(--bg);
-      border: 1.5px solid var(--border); border-radius: var(--radius);
-      padding: 15px 18px 15px 46px;
+      width: 100%; background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 15px 18px 15px 46px;
       font-family: 'DM Sans', sans-serif; font-size: .95rem; color: var(--text);
       outline: none; transition: border-color .22s, box-shadow .22s;
     }
     #url-input::placeholder { color: #2e3350; }
     #url-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
-    #url-input:focus ~ svg, .input-wrap:focus-within svg { stroke: var(--accent); }
-
     #go-btn {
       width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px;
       background: var(--accent); color: #fff; border: none; border-radius: var(--radius);
       padding: 15px; font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700;
-      letter-spacing: .05em; cursor: pointer;
-      box-shadow: 0 4px 22px var(--accent-glow);
+      letter-spacing: .05em; cursor: pointer; box-shadow: 0 4px 22px var(--accent-glow);
       transition: background .22s, box-shadow .22s, transform .15s;
     }
     #go-btn:hover { background: var(--accent-h); box-shadow: 0 6px 30px rgba(0,123,255,.55); transform: translateY(-1px); }
-    #go-btn:active { transform: translateY(0); }
     #go-btn svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-
-    #err {
-      display: none; align-items: center; gap: 8px; margin-top: 12px;
-      padding: 10px 14px; background: rgba(255,77,109,.08);
-      border: 1px solid rgba(255,77,109,.25); border-radius: 9px;
-      font-size: .82rem; color: var(--danger);
-    }
+    #err { display: none; align-items: center; gap: 8px; margin-top: 12px;
+      padding: 10px 14px; background: rgba(255,77,109,.08); border: 1px solid rgba(255,77,109,.25);
+      border-radius: 9px; font-size: .82rem; color: var(--danger); }
     #err.on { display: flex; }
-
-    /* ── QUICK ACCESS ── */
     .quick { width: 100%; max-width: 640px; animation: up .55s var(--ease) both .2s; }
-
-    .ql {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+    .ql { display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
       font-family: 'Syne', sans-serif; font-size: .7rem; font-weight: 700;
-      letter-spacing: .14em; text-transform: uppercase; color: var(--muted);
-    }
+      letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
     .ql::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
     .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-
     .qbtn {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 12px 14px; cursor: pointer; text-decoration: none; color: var(--text);
-      font-family: 'DM Sans', sans-serif; font-size: .84rem; font-weight: 500;
-      transition: border-color .2s, transform .2s, box-shadow .2s;
+      display: flex; align-items: center; gap: 10px; background: var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;
+      cursor: pointer; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: .84rem; font-weight: 500; transition: border-color .2s, transform .2s, box-shadow .2s;
       position: relative; overflow: hidden;
     }
-    .qbtn::after {
-      content: ''; position: absolute; inset: 0;
-      background: var(--accent-dim); opacity: 0; transition: opacity .2s;
-    }
+    .qbtn::after { content: ''; position: absolute; inset: 0; background: var(--accent-dim); opacity: 0; transition: opacity .2s; }
     .qbtn:hover { border-color: rgba(0,123,255,.45); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.25); }
     .qbtn:hover::after { opacity: 1; }
-    .qbtn:active { transform: translateY(0); }
-
-    .qi {
-      width: 30px; height: 30px; border-radius: 7px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; flex-shrink: 0; position: relative; z-index: 1;
-    }
+    .qi { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center;
+      justify-content: center; font-size: 15px; flex-shrink: 0; position: relative; z-index: 1; }
     .ql-txt { position: relative; z-index: 1; }
-
-    .ic-yt   { background: rgba(255,0,0,.15); }
-    .ic-gg   { background: rgba(66,133,244,.15); }
-    .ic-wi   { background: rgba(255,255,255,.07); }
-    .ic-gh   { background: rgba(255,255,255,.07); }
-    .ic-tw   { background: rgba(29,161,242,.15); }
-    .ic-rd   { background: rgba(255,69,0,.15); }
-    .ic-kh   { background: rgba(0,200,83,.15); }
-    .ic-dc   { background: rgba(88,101,242,.15); }
-    .ic-sp   { background: rgba(30,215,96,.15); }
-
-    /* ── FOOTER ── */
-    footer {
-      position: relative; z-index: 1; margin-top: 52px;
-      text-align: center; color: #22263a; font-size: .73rem; letter-spacing: .04em;
-    }
+    .ic-yt { background: rgba(255,0,0,.15); } .ic-gg { background: rgba(66,133,244,.15); }
+    .ic-wi { background: rgba(255,255,255,.07); } .ic-gh { background: rgba(255,255,255,.07); }
+    .ic-rd { background: rgba(255,69,0,.15); } .ic-kh { background: rgba(0,200,83,.15); }
+    footer { position: relative; z-index: 1; margin-top: 52px; text-align: center;
+      color: #22263a; font-size: .73rem; letter-spacing: .04em; }
     footer a { color: #2e3556; text-decoration: none; }
-    footer a:hover { color: var(--muted); }
-
-    /* ── ANIMS ── */
     @keyframes up { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
     @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.75)} }
-
     @media (max-width: 480px) {
       .card { padding: 20px 18px; border-radius: 18px; }
       .qgrid { grid-template-columns: repeat(2, 1fr); }
@@ -213,7 +122,6 @@
 </head>
 <body>
 <div class="page">
-
   <header class="header">
     <div class="badge"><span class="dot"></span>PROXY · SECURE · FAST</div>
     <h1><span class="w">Class </span><span class="b">Unblocker</span></h1>
@@ -226,8 +134,7 @@
 
   <div class="card">
     <div class="input-wrap">
-      <input id="url-input" type="text"
-        placeholder="Search or enter a URL…"
+      <input id="url-input" type="text" placeholder="Search or enter a URL…"
         autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </div>
@@ -245,24 +152,20 @@
     <div class="ql">Quick Access</div>
     <div class="qgrid" id="qgrid"></div>
   </section>
-
 </div>
 
 <footer>© 2025 Class Unblocker &nbsp;·&nbsp; <a href="#">Privacy</a></footer>
 
-<!-- UV scripts loaded from local files (copied by postinstall) -->
-<script src="/uv/uv.bundle.js"></script>
+<!-- UV config (sem bundle — o SW carrega via CDN) -->
 <script src="/uv/uv.config.js"></script>
 
 <script>
-/* ── XOR encode fallback ── */
 function xorEncode(str) {
   return encodeURIComponent(
     str.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 2)).join('')
   );
 }
 
-/* ── Normalise input ── */
 function norm(raw) {
   raw = raw.trim();
   if (!raw) return null;
@@ -271,47 +174,35 @@ function norm(raw) {
   return 'https://www.google.com/search?q=' + encodeURIComponent(raw);
 }
 
-/* ── Navigate ── */
 function navigate(rawUrl) {
   const input = rawUrl || document.getElementById('url-input').value;
-  const url   = norm(input);
-
+  const url = norm(input);
   if (!url) { showErr('Digite uma URL ou termo de busca.'); return; }
   clearErr();
-
   let encoded;
   try {
     encoded = (typeof __uv$config !== 'undefined' && __uv$config.encodeUrl)
-      ? __uv$config.encodeUrl(url)
-      : xorEncode(url);
-  } catch(e) {
-    encoded = xorEncode(url);
-  }
-
+      ? __uv$config.encodeUrl(url) : xorEncode(url);
+  } catch(e) { encoded = xorEncode(url); }
   window.location.href = '/service/' + encoded;
 }
 
-/* ── Error helpers ── */
 function showErr(msg) {
   document.getElementById('err-txt').textContent = msg;
   document.getElementById('err').classList.add('on');
 }
 function clearErr() { document.getElementById('err').classList.remove('on'); }
 
-/* ── Enter key ── */
 document.getElementById('url-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') navigate();
 });
 
-/* ── Service Worker ── */
-const swEl  = document.getElementById('sw-status');
+const swEl = document.getElementById('sw-status');
 const swTxt = document.getElementById('sw-txt');
 
 async function registerSW() {
   if (!('serviceWorker' in navigator)) {
-    swEl.classList.add('error');
-    swTxt.textContent = 'Service Worker not supported';
-    return;
+    swEl.classList.add('error'); swTxt.textContent = 'SW not supported'; return;
   }
   try {
     await navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/service/' });
@@ -321,19 +212,17 @@ async function registerSW() {
   } catch(e) {
     swEl.classList.add('error');
     swTxt.textContent = 'SW Error: ' + e.message;
-    console.error('[UV]', e);
   }
 }
 registerSW();
 
-/* ── Quick Access ── */
 const shortcuts = [
-  { label:'Google',      url:'https://google.com',         icon:'🔍', cls:'ic-gg' },
-  { label:'YouTube',     url:'https://youtube.com',        icon:'▶',  cls:'ic-yt' },
-  { label:'Wikipedia',   url:'https://en.wikipedia.org',   icon:'📖', cls:'ic-wi' },
-  { label:'Reddit',      url:'https://reddit.com',         icon:'⬆',  cls:'ic-rd' },
-  { label:'GitHub',      url:'https://github.com',         icon:'</>',cls:'ic-gh' },
-  { label:'Khan Academy',url:'https://khanacademy.org',    icon:'🎓', cls:'ic-kh' },
+  { label:'Google',      url:'https://google.com',       icon:'🔍', cls:'ic-gg' },
+  { label:'YouTube',     url:'https://youtube.com',      icon:'▶',  cls:'ic-yt' },
+  { label:'Wikipedia',   url:'https://en.wikipedia.org', icon:'📖', cls:'ic-wi' },
+  { label:'Reddit',      url:'https://reddit.com',       icon:'⬆',  cls:'ic-rd' },
+  { label:'GitHub',      url:'https://github.com',       icon:'</>',cls:'ic-gh' },
+  { label:'Khan Academy',url:'https://khanacademy.org',  icon:'🎓', cls:'ic-kh' },
 ];
 
 const grid = document.getElementById('qgrid');
