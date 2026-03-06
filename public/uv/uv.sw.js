@@ -1,11 +1,5 @@
-/**
- * uv.sw.js — Ultraviolet Service Worker entry point
- * Intercepta e redireciona todas as requisições através do proxy UV.
- */
-
 importScripts("/uv/uv.bundle.js");
 importScripts("/uv/uv.config.js");
-importScripts("/uv/uv.handler.js");
 
 const sw = new UVServiceWorker();
 
