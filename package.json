@@ -1,16 +1,19 @@
 {
   "name": "class-unblocker",
   "version": "1.0.0",
-  "description": "Minimal proxy portal powered by Ultraviolet",
+  "description": "Web proxy powered by Ultraviolet — deploy on Vercel",
   "private": true,
   "scripts": {
-    "build": "node scripts/build.js",
-    "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "npx serve public -l 3000",
+    "build": "echo 'Static project — no build step required.'"
   },
   "dependencies": {
-    "@titaniumnetwork-dev/ultraviolet": "^3.2.2",
-    "@tomphttp/bare-server-node": "^2.0.3",
-    "express": "^4.18.2"
+    "@titaniumnetwork-dev/ultraviolet": "^2.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
