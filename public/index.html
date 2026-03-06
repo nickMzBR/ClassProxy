@@ -643,5 +643,45 @@
     });
   </script>
 
+  <!-- ══════════ UV SERVICE WORKER REGISTRATION ══════════ -->
+  <script>
+    (async () => {
+      if (!('serviceWorker' in navigator)) {
+        console.warn('[UV] Service Workers not supported in this browser.');
+        return;
+      }
+
+      try {
+        // Wait for uv.config.js to expose __uv$config
+        if (typeof __uv$config === 'undefined') {
+          console.warn('[UV] __uv$config not found — make sure uv.config.js loaded correctly.');
+          return;
+        }
+
+        const reg = await navigator.serviceWorker.register(
+          __uv$config.sw,          // '/uv/uv.sw.js'
+          { scope: __uv$config.prefix }  // '/service/'
+        );
+
+        console.log('[UV] Service Worker registered. Scope:', reg.scope);
+
+        // If a new SW is waiting, activate it immediately
+        if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              newSW.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+
+      } catch (err) {
+        console.error('[UV] Service Worker registration failed:', err);
+      }
+    })();
+  </script>
+
 </body>
 </html>
