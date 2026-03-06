@@ -1,0 +1,48 @@
+{
+  "versão": 2,
+  "nome": "desbloqueador de classe",
+
+  "construções": [
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+
+  "reescrever": [
+    {
+      "source": "/bare/:path*",
+      "destino": "https://your-bare-server.example.com/:path*"
+    },
+    {
+      "origem": "/service/:path*",
+      "destino": "/service/:path*"
+    },
+    {
+      "fonte": "/((?!.*\\.).*)",
+      "destino": "/public/index.html"
+    }
+  ],
+
+  "cabeçalhos": [
+    {
+      "fonte": "/(.*)",
+      "cabeçalhos": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "chave": "Política de referência", "valor": "sem referência" },
+        { "chave": "Política de permissões", "valor": "coorte de interesse=()" },
+        {
+          "chave": "Política de segurança de conteúdo"
+          "value": "default-src 'self' https:; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:;"
+        }
+      ]
+    },
+    {
+      "fonte": "/uv/(.*)",
+      "cabeçalhos": [
+        { "key": "Service-Worker-Allowed", "value": "/" }
+      ]
+    }
+  ]
+}
