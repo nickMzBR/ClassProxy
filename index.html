@@ -3,38 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navegador Privado</title>
+    <title>Navegador Stealth Pro</title>
     <style>
-        /* Estilo Azul Minimalista */
-        body { font-family: sans-serif; background: #0f172a; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-        .bar { background: #1e293b; padding: 10px; display: flex; gap: 5px; border-bottom: 2px solid #007bff; }
-        input { flex: 1; padding: 12px; border-radius: 8px; border: none; font-size: 16px; }
-        button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; }
-        iframe { flex: 1; border: none; background: white; }
+        :root {
+            --bg: #0f172a;
+            --accent: #007bff;
+            --bar: #1e293b;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%; width: 100%;
+            background: var(--bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background: var(--bar);
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid var(--accent);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus { border-color: var(--accent); }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        .frame-container {
+            flex: 1;
+            width: 100%;
+            background: white;
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="bar">
-        <input type="text" id="urlInput" placeholder="https://site-bloqueado.com">
-        <button id="goBtn">IR</button>
+    <div class="navbar">
+        <input type="text" id="url" placeholder="Digite o site (ex: google.com.br)">
+        <button onclick="carregar()">IR</button>
     </div>
 
-    <iframe id="viewer"></iframe>
+    <div class="frame-container">
+        <iframe id="browser" src="about:blank"></iframe>
+    </div>
 
     <script>
-        // JS DO NAVEGADOR
-        const input = document.getElementById('urlInput');
-        const btn = document.getElementById('goBtn');
-        const frame = document.getElementById('viewer');
+        function carregar() {
+            let target = document.getElementById('url').value.trim();
+            if (!target) return;
 
-        btn.onclick = () => {
-            let url = input.value;
-            if (!url.startsWith('http')) url = 'https://' + url;
-            
-            // Manda para a nossa função no Vercel
-            frame.src = `/api/proxy?url=${encodeURIComponent(url)}`;
-        };
+            // Limpa a URL
+            target = target.replace(/^https?:\/\//, '');
+            const finalUrl = "https://" + target;
+
+            // Mostra o status no console do navegador (útil no celular)
+            console.log("Navegando para: " + finalUrl);
+
+            // Chama a API do Vercel
+            const proxyPath = `/api/proxy?url=${encodeURIComponent(finalUrl)}`;
+            document.getElementById('browser').src = proxyPath;
+        }
+
+        // Permite apertar "Enter" no teclado do celular para ir
+        document.getElementById('url').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') carregar();
+        });
     </script>
 </body>
 </html>
