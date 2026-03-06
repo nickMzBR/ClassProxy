@@ -2,12 +2,8 @@
   "version": 2,
   "name": "class-unblocker",
 
-  "builds": [
-    {
-      "src": "public/**/*",
-      "use": "@vercel/static"
-    }
-  ],
+  "buildCommand": "npm install && node scripts/build.js",
+  "outputDirectory": "public",
 
   "rewrites": [
     {
@@ -20,7 +16,7 @@
     },
     {
       "source": "/((?!.*\\.).*)",
-      "destination": "/public/index.html"
+      "destination": "/index.html"
     }
   ],
 
@@ -28,14 +24,9 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Frame-Options",           "value": "DENY" },
-        { "key": "X-Content-Type-Options",     "value": "nosniff" },
-        { "key": "Referrer-Policy",            "value": "no-referrer" },
-        { "key": "Permissions-Policy",         "value": "interest-cohort=()" },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self' https:; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:;"
-        }
+        { "key": "X-Content-Type-Options",  "value": "nosniff" },
+        { "key": "Referrer-Policy",         "value": "no-referrer" },
+        { "key": "Permissions-Policy",      "value": "interest-cohort=()" }
       ]
     },
     {
