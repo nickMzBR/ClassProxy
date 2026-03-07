@@ -4,12 +4,9 @@
   "private": true,
   "scripts": {
     "postinstall": "node scripts/install-uv.js",
-    "dev": "node server.js",
     "build": "node scripts/install-uv.js"
   },
   "dependencies": {
-    "@titaniumnetwork-dev/ultraviolet": "^2.3.1",
-    "@mercuryworkshop/bare-mux": "^2.0.3",
-    "epoxy-transport": "^1.0.0"
+    "@titaniumnetwork-dev/ultraviolet": "^2.0.0"
   }
 }
