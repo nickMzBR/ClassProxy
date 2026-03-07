@@ -1,17 +1,23 @@
 {
   "version": 2,
-  "buildCommand": "node build.js",
-  "outputDirectory": "public",
-  "rewrites": [
-    { "source": "/api/bare/:path*", "destination": "/api/bare" }
-  ],
-  "headers": [
+  "builds": [
     {
-      "source": "/uv/uv.sw.js",
-      "headers": [
-        { "key": "Service-Worker-Allowed", "value": "/" },
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
-      ]
+      "src": "api/proxy.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/proxy",
+      "dest": "/api/proxy.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 }
