@@ -1,25 +1,45 @@
-const fs   = require("fs");
-const path = require("path");
+// build.js — baixa uv.bundle.js e uv.handler.js do CDN no build do Vercel
+const https = require("https");
+const fs    = require("fs");
+const path  = require("path");
 
-const dest = path.join(__dirname, "public", "uv");
-if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+const UV_VERSION = "2.0.0";
+const BASE_URL   = `https://cdn.jsdelivr.net/npm/@titaniumnetwork-dev/ultraviolet@${UV_VERSION}/dist`;
+const DEST       = path.join(__dirname, "public", "uv");
 
-const uvDist = path.join(__dirname, "node_modules", "@titaniumnetwork-dev", "ultraviolet", "dist");
-const bareDist = path.join(__dirname, "node_modules", "@mercuryworkshop", "bare-mux", "dist");
+if (!fs.existsSync(DEST)) fs.mkdirSync(DEST, { recursive: true });
 
-const copies = [
-  [path.join(uvDist, "uv.bundle.js"),  path.join(dest, "uv.bundle.js")],
-  [path.join(uvDist, "uv.handler.js"), path.join(dest, "uv.handler.js")],
-  [path.join(bareDist, "bare.cjs"),    path.join(dest, "bare.cjs")],
-];
+function download(url, dest) {
+  return new Promise((resolve, reject) => {
+    const file = fs.createWriteStream(dest);
+    https.get(url, res => {
+      if (res.statusCode === 301 || res.statusCode === 302) {
+        file.close();
+        fs.unlinkSync(dest);
+        return download(res.headers.location, dest).then(resolve).catch(reject);
+      }
+      if (res.statusCode !== 200) {
+        file.close();
+        return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
+      }
+      res.pipe(file);
+      file.on("finish", () => { file.close(); resolve(); });
+    }).on("error", err => { fs.unlinkSync(dest); reject(err); });
+  });
+}
 
-copies.forEach(([src, dst]) => {
-  if (fs.existsSync(src)) {
-    fs.copyFileSync(src, dst);
-    console.log("✔ Copied", path.basename(dst));
-  } else {
-    console.warn("⚠ Not found:", src);
+(async () => {
+  const files = ["uv.bundle.js", "uv.handler.js"];
+  for (const f of files) {
+    const url  = `${BASE_URL}/${f}`;
+    const dest = path.join(DEST, f);
+    if (fs.existsSync(dest)) {
+      console.log(`✔ Already exists: ${f}`);
+      continue;
+    }
+    console.log(`⬇ Downloading ${f}...`);
+    await download(url, dest);
+    console.log(`✔ Done: ${f}`);
   }
-});
-
-console.log("✅ Build complete");
+  console.log("✅ Build complete");
+})();
