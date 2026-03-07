@@ -15,11 +15,10 @@
     }
 
     :root {
-      /* SEU ESTILO APLICADO AQUI */
-      --bg:        #222; /* Fundo cinza escuro tech que você gosta */
-      --surface:   #2a2a30; /* Um tom levemente mais claro para cards */
-      --border:    #3a3a40; /* Bordas sutis */
-      --accent:    #007bff; /* Azul vibrante para botões e destaques */
+      --bg:        #1a1a1e;
+      --surface:   #222228;
+      --border:    #2e2e38;
+      --accent:    #007bff;
       --accent-glow: rgba(0, 123, 255, 0.35);
       --accent-dim:  rgba(0, 123, 255, 0.08);
       --text:      #e0e4ef;
@@ -36,12 +35,20 @@
       overflow-x: hidden;
     }
 
-    /* ─── Grid background REMOVIDO ─── */
+    /* ─── Grid background ─── */
     body::before {
-      display: none; /* Desativa o fundo grid */
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,123,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,123,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    /* ─── Radial glow MANTIDO ─── */
+    /* ─── Radial glow ─── */
     body::after {
       content: '';
       position: fixed;
@@ -182,7 +189,7 @@
     }
 
     #url-input::placeholder {
-      color: #5a5d6a; /* Ajustado para melhor contraste no fundo escuro */
+      color: #40424d;
     }
 
     #url-input:-webkit-autofill {
@@ -372,7 +379,7 @@
       justify-content: space-between;
       align-items: center;
       border-top: 1px solid var(--border);
-      background: rgba(34, 34, 34, 0.85); /* Fundo do rodapé ajustado */
+      background: rgba(26, 26, 30, 0.85);
       backdrop-filter: blur(10px);
       z-index: 10;
     }
@@ -388,7 +395,7 @@
       color: var(--accent);
     }
 
-    /* ─── Keyframes MANTIDOS ─── */
+    /* ─── Keyframes ─── */
     @keyframes fadeDown {
       from { opacity: 0; transform: translateY(-20px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -405,7 +412,7 @@
       50%       { opacity: 0.35; }
     }
 
-    /* ─── Responsive MANTIDO ─── */
+    /* ─── Responsive ─── */
     @media (max-width: 480px) {
       .stats-bar { gap: 1.5rem; }
       .go-btn { padding: 0 1rem; }
@@ -414,6 +421,7 @@
 </head>
 <body>
 
+<!-- Loading overlay -->
 <div id="loader">
   <div class="loader-ring"></div>
   <span class="loader-text">Establishing Tunnel</span>
@@ -422,6 +430,7 @@
 
 <main class="page">
 
+  <!-- Header -->
   <header class="header">
     <div class="logo-row">
       <div class="logo-icon">
@@ -441,6 +450,7 @@
     </p>
   </header>
 
+  <!-- Search -->
   <div class="search-card">
     <p class="search-label">// Enter Target URL</p>
     <div class="search-wrap">
@@ -467,6 +477,7 @@
     </div>
   </div>
 
+  <!-- Quick links -->
   <div class="quick-links">
     <p class="ql-label">// Quick Access</p>
     <div class="ql-grid">
@@ -480,6 +491,7 @@
     </div>
   </div>
 
+  <!-- Stats -->
   <div class="stats-bar">
     <div class="stat">
       <span class="stat-value">SSL</span>
@@ -495,6 +507,7 @@
     </div>
   </div>
 
+  <!-- Status -->
   <div class="status-line">
     <span class="status-dot"></span>
     <span>Proxy server online · Vercel Edge Network · Node.js runtime</span>
@@ -537,7 +550,7 @@
     loaderUrl.textContent = url;
     loader.classList.add('active');
 
-    // Redirect to proxy (Modelo de Mirroring direto via Vercel)
+    // Redirect to proxy
     window.location.href = '/api/proxy?url=' + encodeURIComponent(url);
   }
 
