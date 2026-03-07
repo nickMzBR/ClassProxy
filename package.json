@@ -1,12 +1,8 @@
 {
   "name": "class-unblocker",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "private": true,
   "scripts": {
     "build": "node build.js"
-  },
-  "dependencies": {
-    "@titaniumnetwork-dev/ultraviolet": "^2.0.0",
-    "@mercuryworkshop/bare-mux": "^2.0.0"
   }
 }
