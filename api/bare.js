@@ -1,138 +1,99 @@
-// api/bare.js — Bare Server v3 for Vercel Serverless
 const http  = require("http");
 const https = require("https");
 const { URL } = require("url");
-const zlib  = require("zlib");
 
-const HOP_HEADERS = new Set([
-  "connection","keep-alive","transfer-encoding","te","trailer",
-  "upgrade","proxy-authorization","proxy-authenticate","proxy-connection"
-]);
+const HOP = new Set(["connection","keep-alive","transfer-encoding","te","trailer","upgrade","proxy-authorization","proxy-authenticate","proxy-connection"]);
 
 function readBody(stream) {
   return new Promise((res, rej) => {
-    const chunks = [];
-    stream.on("data", c => chunks.push(c));
-    stream.on("end",  () => res(Buffer.concat(chunks)));
+    const c = [];
+    stream.on("data", d => c.push(d));
+    stream.on("end",  () => res(Buffer.concat(c)));
     stream.on("error", rej);
   });
 }
 
-function request(url, options, body) {
+function upstream(url, method, headers, body) {
   return new Promise((res, rej) => {
-    const parsed  = new URL(url);
-    const isHttps = parsed.protocol === "https:";
-    const mod     = isHttps ? https : http;
-    const req = mod.request({
-      hostname: parsed.hostname,
-      port:     parsed.port || (isHttps ? 443 : 80),
-      path:     parsed.pathname + parsed.search,
-      method:   options.method,
-      headers:  options.headers,
-      timeout:  30000,
+    const p = new URL(url);
+    const s = p.protocol === "https:";
+    const r = (s ? https : http).request({
+      hostname: p.hostname,
+      port: p.port || (s ? 443 : 80),
+      path: p.pathname + p.search,
+      method, headers,
+      timeout: 30000,
       rejectUnauthorized: false,
     }, res);
-    req.on("error",   rej);
-    req.on("timeout", () => { req.destroy(); rej(new Error("Upstream timeout")); });
-    if (body && body.length) req.write(body);
-    req.end();
+    r.on("error", rej);
+    r.on("timeout", () => { r.destroy(); rej(new Error("Timeout")); });
+    if (body && body.length) r.write(body);
+    r.end();
   });
 }
 
 module.exports = async (req, res) => {
-  // CORS — bare server must be open
-  res.setHeader("Access-Control-Allow-Origin",   "*");
-  res.setHeader("Access-Control-Allow-Headers",  "*");
-  res.setHeader("Access-Control-Allow-Methods",  "*");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Methods", "*");
   res.setHeader("Access-Control-Expose-Headers", "*");
 
-  if (req.method === "OPTIONS") {
-    res.statusCode = 204;
-    return res.end();
-  }
+  if (req.method === "OPTIONS") { res.statusCode = 204; return res.end(); }
 
-  // ── Bare v3 meta ──
   if (req.method === "GET" && (!req.url || req.url === "/" || req.url === "")) {
     res.setHeader("Content-Type", "application/json");
-    return res.end(JSON.stringify({
-      versions: ["v3"],
-      language: "NodeJS",
-      memoryUsage: 0,
-      maintainer: {},
-      project: { name: "class-unblocker", version: "4.0.0" },
-    }));
+    return res.end(JSON.stringify({ versions: ["v3"], language: "NodeJS", project: { name: "class-unblocker" } }));
   }
 
-  // ── Parse Bare request ──
-  let targetUrl, forwardHeaders, passHeaders, cacheKey;
-
-  try {
-    const rawUrl = req.headers["x-bare-url"];
-    if (!rawUrl) {
-      res.statusCode = 400;
-      res.setHeader("Content-Type", "application/json");
-      return res.end(JSON.stringify({ code: "MISSING_BARE_URL", id: "bare", message: "Missing X-Bare-URL" }));
-    }
-
-    targetUrl    = rawUrl;
-    forwardHeaders = JSON.parse(req.headers["x-bare-forward-headers"] || "[]");
-    passHeaders    = JSON.parse(req.headers["x-bare-pass-headers"]    || "[]");
-    cacheKey       = req.headers["x-bare-cache-key"] || null;
-
-    new URL(targetUrl); // validate
-  } catch(e) {
+  const rawUrl = req.headers["x-bare-url"];
+  if (!rawUrl) {
     res.statusCode = 400;
-    res.setHeader("Content-Type", "application/json");
-    return res.end(JSON.stringify({ code: "INVALID_BARE_HEADER", id: "bare", message: e.message }));
+    return res.end(JSON.stringify({ code: "MISSING_BARE_URL", message: "Missing X-Bare-URL header" }));
   }
 
-  // Build upstream headers
-  const upstreamHeaders = {};
+  try { new URL(rawUrl); } catch(e) {
+    res.statusCode = 400;
+    return res.end(JSON.stringify({ code: "INVALID_URL", message: e.message }));
+  }
+
+  const forwardHeaders = JSON.parse(req.headers["x-bare-forward-headers"] || "[]");
+  const passHeaders    = JSON.parse(req.headers["x-bare-pass-headers"]    || "[]");
+
+  const upHeaders = {};
   for (const h of forwardHeaders) {
-    if (req.headers[h.toLowerCase()]) {
-      upstreamHeaders[h] = req.headers[h.toLowerCase()];
-    }
+    const val = req.headers[h.toLowerCase()];
+    if (val) upHeaders[h] = val;
   }
 
-  // Read request body
   let body = Buffer.alloc(0);
-  if (!["GET","HEAD"].includes(req.method)) {
-    body = await readBody(req);
-  }
+  if (!["GET","HEAD"].includes(req.method)) body = await readBody(req);
 
   try {
-    const upstream = await request(targetUrl, {
-      method:  req.method,
-      headers: upstreamHeaders,
-    }, body);
+    const upRes = await upstream(rawUrl, req.method, upHeaders, body);
 
-    // Build pass headers
-    const resHeaders = {};
-    for (const h of passHeaders) {
-      const val = upstream.headers[h.toLowerCase()];
-      if (val) resHeaders[h] = Array.isArray(val) ? val.join(", ") : val;
+    const bareHeaders = {};
+    for (const [k, v] of Object.entries(upRes.headers)) {
+      if (!HOP.has(k.toLowerCase())) bareHeaders[k] = Array.isArray(v) ? v.join(", ") : v;
     }
 
-    // Expose bare response metadata
-    res.setHeader("X-Bare-Status",      String(upstream.statusCode));
-    res.setHeader("X-Bare-Status-Text", upstream.statusMessage || "");
-    res.setHeader("X-Bare-Headers",     JSON.stringify(
-      Object.fromEntries(
-        Object.entries(upstream.headers)
-          .filter(([k]) => !HOP_HEADERS.has(k.toLowerCase()))
-          .map(([k,v]) => [k, Array.isArray(v) ? v.join(", ") : v])
-      )
-    ));
+    const passOut = {};
+    for (const h of passHeaders) {
+      const val = upRes.headers[h.toLowerCase()];
+      if (val) passOut[h] = Array.isArray(val) ? val.join(", ") : val;
+    }
 
-    for (const [k, v] of Object.entries(resHeaders)) {
+    res.setHeader("X-Bare-Status",      String(upRes.statusCode));
+    res.setHeader("X-Bare-Status-Text", upRes.statusMessage || "");
+    res.setHeader("X-Bare-Headers",     JSON.stringify(bareHeaders));
+
+    for (const [k, v] of Object.entries(passOut)) {
       try { res.setHeader(k, v); } catch {}
     }
 
     res.statusCode = 200;
-    upstream.pipe(res);
+    upRes.pipe(res);
   } catch(e) {
     res.statusCode = 500;
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ code: "CONNECTION_FAILED", id: "connection", message: e.message }));
+    res.end(JSON.stringify({ code: "CONNECTION_FAILED", message: e.message }));
   }
 };
