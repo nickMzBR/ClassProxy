@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "npm install && npm run build",
+  "buildCommand": "node build.js",
   "outputDirectory": "public",
   "rewrites": [
     { "source": "/api/bare/:path*", "destination": "/api/bare" }
@@ -10,13 +10,7 @@
       "source": "/uv/uv.sw.js",
       "headers": [
         { "key": "Service-Worker-Allowed", "value": "/" },
-        { "key": "Cache-Control",          "value": "no-cache, no-store, must-revalidate" }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Frame-Options",        "value": "SAMEORIGIN" }
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
       ]
     }
   ]
