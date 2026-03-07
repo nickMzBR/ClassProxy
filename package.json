@@ -1,8 +1,14 @@
 {
   "name": "class-unblocker",
-  "version": "5.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "A reverse proxy that bypasses site restrictions, running entirely on Vercel.",
+  "main": "api/proxy.js",
   "scripts": {
-    "build": "node build.js"
-  }
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "engines": {
+    "node": ">=18.x"
+  },
+  "license": "MIT"
 }
