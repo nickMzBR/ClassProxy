@@ -13,7 +13,7 @@
       --bg: #0d0f1a; --card: #1c1f2e; --border: #252839;
       --accent: #007bff; --accent-h: #3395ff; --accent-glow: rgba(0,123,255,0.4);
       --accent-dim: rgba(0,123,255,0.10); --text: #e8eaf6; --muted: #5a6482;
-      --success: #00e5a0; --danger: #ff4d6d; --radius: 14px;
+      --success: #00e5a0; --radius: 14px;
     }
     html, body { height: 100%; background: var(--bg); color: var(--text);
       font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
@@ -70,32 +70,27 @@
       font-family: 'Syne', sans-serif; font-size: .7rem; font-weight: 700;
       letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
     .ql::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-    .qgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
-    .qbtn { display: flex; align-items: center; gap: 10px; background: var(--card);
-      border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px;
-      cursor: pointer; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: .84rem;
-      font-weight: 500; transition: border-color .2s, transform .2s; position: relative; overflow: hidden; }
+    .qgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
+    .qbtn { display: flex; align-items: center; justify-content: center;
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 14px; cursor: pointer; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500;
+      transition: border-color .2s, transform .2s; position: relative; overflow: hidden; }
     .qbtn::after { content: ''; position: absolute; inset: 0; background: var(--accent-dim); opacity: 0; transition: opacity .2s; }
     .qbtn:hover { border-color: rgba(0,123,255,.45); transform: translateY(-2px); }
     .qbtn:hover::after { opacity: 1; }
-    .qi { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center;
-      justify-content: center; font-size: 15px; flex-shrink: 0; position: relative; z-index: 1; }
-    .ql-txt { position: relative; z-index: 1; }
-    .ic-yt{background:rgba(255,0,0,.15)} .ic-gg{background:rgba(66,133,244,.15)}
-    .ic-wi{background:rgba(255,255,255,.07)} .ic-gh{background:rgba(255,255,255,.07)}
-    .ic-rd{background:rgba(255,69,0,.15)} .ic-kh{background:rgba(0,200,83,.15)}
-    .ic-tw{background:rgba(29,161,242,.15)} .ic-dc{background:rgba(88,101,242,.15)}
+    .qbtn span { position: relative; z-index: 1; }
     footer { position: relative; z-index: 1; margin-top: 52px; text-align: center;
       color: #22263a; font-size: .73rem; }
     @keyframes up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
     @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.75)} }
-    @media(max-width:480px){ .card{padding:20px 18px} .qgrid{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:480px){ .card{padding:20px 18px} }
   </style>
 </head>
 <body>
 <div class="page">
   <header class="header">
-    <div class="badge"><span class="dot"></span>Class Proxy your free browser</div>
+    <div class="badge"><span class="dot"></span>PROXY · SECURE · FAST</div>
     <h1><span class="w">Class </span><span class="b">Unblocker</span></h1>
     <p class="sub">Browse freely. Enter a URL or search term to get started.</p>
   </header>
@@ -117,14 +112,13 @@
     <div class="qgrid" id="qgrid"></div>
   </section>
 </div>
-<footer>By red</footer>
+<footer>© 2025 Class Unblocker</footer>
 
 <script>
 function go(raw) {
   var v = raw || document.getElementById("url-input").value.trim();
   if (!v) return;
   if (!/^https?:\/\//i.test(v)) {
-    // Se parece domínio, adiciona https; senão, busca no Google
     v = /^[\w-]+\.[\w.]{2,}/.test(v)
       ? "https://" + v
       : "https://www.google.com/search?q=" + encodeURIComponent(v);
@@ -137,22 +131,20 @@ document.getElementById("url-input").addEventListener("keydown", function(e){
 });
 
 var shortcuts = [
-  {label:"Google",      url:"https://www.google.com",      icon:"🔍", cls:"ic-gg"},
-  {label:"YouTube",     url:"https://www.youtube.com",     icon:"▶",  cls:"ic-yt"},
-  {label:"Wikipedia",   url:"https://en.wikipedia.org",    icon:"📖", cls:"ic-wi"},
-  {label:"Reddit",      url:"https://www.reddit.com",      icon:"⬆",  cls:"ic-rd"},
-  {label:"GitHub",      url:"https://github.com",          icon:"</>",cls:"ic-gh"},
-  {label:"Khan Academy",url:"https://www.khanacademy.org", icon:"🎓", cls:"ic-kh"},
-  {label:"Twitter / X", url:"https://x.com",               icon:"✦",  cls:"ic-tw"},
-  {label:"Discord",     url:"https://discord.com/app",     icon:"#",  cls:"ic-dc"},
+  { label: "CrimsonZeroHub", url: "https://crimsonzerohub.xyz/" },
+  { label: "Poki",           url: "https://poki.com/" },
+  { label: "Gemini",         url: "https://gemini.google.com/" },
+  { label: "Doge Unblock",               url: "https://classunblocker.vercel.app/" },
 ];
 
 var grid = document.getElementById("qgrid");
 shortcuts.forEach(function(s){
   var b = document.createElement("button");
   b.className = "qbtn";
-  b.innerHTML = '<span class="qi ' + s.cls + '">' + s.icon + '</span><span class="ql-txt">' + s.label + '</span>';
-  b.onclick = function(){ go(s.url); };
+  b.innerHTML = '<span>' + (s.label || "") + '</span>';
+  if (s.url) {
+    b.onclick = function(){ go(s.url); };
+  }
   grid.appendChild(b);
 });
 </script>
